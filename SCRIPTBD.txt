@@ -1,0 +1,86 @@
+-- =============================================
+-- CREACIÓN COMPLETA DE LA BASE DE DATOS rrhhdb
+-- =============================================
+
+-- 1. CREAR LA BASE DE DATOS (si no existe)
+CREATE DATABASE IF NOT EXISTS rrhhdb
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE rrhhdb;
+
+-- 2. TABLA: departamento
+CREATE TABLE IF NOT EXISTS departamento (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL UNIQUE
+) ENGINE=InnoDB;
+
+-- 3. TABLA: empleado
+CREATE TABLE IF NOT EXISTS empleado (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  puesto VARCHAR(100) NOT NULL,
+  salario DECIMAL(10, 2) NOT NULL,
+  departamento_id BIGINT,
+  FOREIGN KEY (departamento_id) REFERENCES departamento(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- 4. TABLA: vacacion (singular)
+CREATE TABLE IF NOT EXISTS vacacion (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  empleado_id BIGINT NOT NULL,
+  fecha_inicio DATE NOT NULL,
+  fecha_fin DATE NOT NULL,
+  FOREIGN KEY (empleado_id) REFERENCES empleado(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- 5. TABLA: evaluacion
+CREATE TABLE IF NOT EXISTS evaluacion (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  empleado_id BIGINT NOT NULL,
+  resultado TEXT NOT NULL,
+  FOREIGN KEY (empleado_id) REFERENCES empleado(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- =============================================
+-- ÍNDICES PARA MEJOR RENDIMIENTO
+-- =============================================
+CREATE INDEX idx_empleado_departamento ON empleado(departamento_id);
+CREATE INDEX idx_vacacion_empleado ON vacacion(empleado_id);
+CREATE INDEX idx_evaluacion_empleado ON evaluacion(empleado_id);
+
+-- =============================================
+-- DATOS DE PRUEBA (NO SE DUPLICAN)
+-- =============================================
+INSERT IGNORE INTO departamento (nombre) VALUES
+('Recursos Humanos'),
+('Tecnología'),
+('Ventas');
+
+INSERT IGNORE INTO empleado (nombre, puesto, salario, departamento_id) VALUES
+('Ana López', 'Gerente RRHH', 5000.00, 1),
+('Carlos Gómez', 'Desarrollador', 4500.00, 2),
+('María Pérez', 'Vendedora', 3200.00, 3),
+('Luis Ramírez', 'Contador', 3800.00, 1),
+('Sofía Mendoza', 'Diseñadora', 4200.00, 2);
+
+INSERT IGNORE INTO vacacion (empleado_id, fecha_inicio, fecha_fin) VALUES
+(1, '2025-12-20', '2025-12-27'),
+(2, '2025-08-01', '2025-08-15'),
+(3, '2025-07-10', '2025-07-20'),
+(4, '2025-11-05', '2025-11-12');
+
+INSERT IGNORE INTO evaluacion (empleado_id, resultado) VALUES
+(1, 'Excelente desempeño en gestión de personal'),
+(2, 'Sobresaliente en desarrollo de software'),
+(3, 'Buen rendimiento en ventas'),
+(4, 'Muy bueno en contabilidad'),
+(5, 'Creativa y eficiente en diseño');
+
+-- =============================================
+-- VERIFICACIÓN FINAL
+-- =============================================
+SELECT 'Base de datos y tablas creadas correctamente' AS Estado;
+SHOW TABLES;
+SELECT COUNT(*) AS Total_Empleados FROM empleado;
+SELECT COUNT(*) AS Total_Vacaciones FROM vacacion;
