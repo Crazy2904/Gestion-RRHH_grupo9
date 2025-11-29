@@ -3,7 +3,8 @@ const API = {
   empleados: '/empleados/listar',
   departamentos: '/departamentos/listar',
   vacacion: '/vacacion/listar',
-  evaluaciones: '/evaluaciones/listar'
+  evaluaciones: '/evaluaciones/listar',
+  asistencia: '/asistencia/listar',
 };
 
 // MOSTRAR SECCIÓN + URL
@@ -16,12 +17,13 @@ function mostrarSeccion(id) {
     'empleados': '/empleados',
     'departamentos': '/departamentos',
     'vacacion': '/vacacion',
-    'evaluaciones': '/evaluaciones'
+    'evaluaciones': '/evaluaciones',
+    'asistencia': '/asistencia',
   };
   history.pushState({ seccion: id }, '', rutas[id] || '/');
 
   listar(id);
-  if (['empleados', 'vacacion', 'evaluaciones'].includes(id)) cargarSelects();
+  if (['empleados', 'vacacion', 'evaluaciones','asistencia'].includes(id)) cargarSelects();
 }
 
 // LISTAR
@@ -47,6 +49,14 @@ async function listar(tipo) {
       } else if (tipo === 'evaluaciones') {
         cols = `<td>${e.id}</td><td>${e.empleado?.nombre || ''}</td><td>${e.resultado || ''}</td>`;
       }
+      else if (tipo === 'asistencia') {
+            cols = `<td>${e.id}</td>
+                    <td>${e.empleado?.nombre || ''}</td>
+                    <td>${e.fecha}</td>
+                    <td>${e.horaEntrada}</td>
+                    <td>${e.horaSalida}</td>`;
+}
+
 
       tbody.innerHTML += `<tr>${cols}<td class="actions">
         <button onclick="editar('${tipo}', ${e.id})">Editar</button>
@@ -121,6 +131,14 @@ async function editar(tipo, id) {
     document.getElementById('empleadoEval').value = e.empleado?.id || '';
     document.getElementById('resultadoEval').value = e.resultado || '';
   }
+  else if (tipo === 'asistencia') {
+  document.getElementById('idAsistencia').value = e.id;
+  document.getElementById('empleadoAsis').value = e.empleado?.id || '';
+  document.getElementById('fechaAsis').value = e.fecha;
+  document.getElementById('entradaAsis').value = e.horaEntrada;
+  document.getElementById('salidaAsis').value = e.horaSalida;
+}
+
 }
 
 // CARGAR SELECTS
@@ -141,7 +159,7 @@ async function cargarSelects() {
 
     const empRes = await fetch('/empleados/listar');
     const emps = await empRes.json();
-    ['empleadoVac', 'empleadoEval'].forEach(id => {
+    ['empleadoVac', 'empleadoEval', 'empleadoAsis'].forEach(id => {
       const sel = document.getElementById(id);
       if (sel) {
         sel.innerHTML = '<option value="">Seleccione un Empleado</option>';
@@ -162,7 +180,7 @@ async function cargarSelects() {
 window.addEventListener('popstate', () => {
   const path = window.location.pathname;
   const seccion = path.substring(1) || 'empleados';
-  const validas = ['empleados', 'departamentos', 'vacacion', 'evaluaciones'];
+  const validas = ['empleados', 'departamentos', 'vacacion', 'evaluaciones','asistencia'];
   if (validas.includes(seccion)) mostrarSeccion(seccion);
 });
 
@@ -205,12 +223,24 @@ document.getElementById('formEvaluacion')?.addEventListener('submit', e => {
   }, e.target);
 });
 
+document.getElementById('formAsistencia')?.addEventListener('submit', e => {
+  e.preventDefault();
+  guardar('asistencia', {
+    id: document.getElementById('idAsistencia').value || null,
+    empleado: { id: document.getElementById('empleadoAsis').value },
+    fecha: document.getElementById('fechaAsis').value,
+    horaEntrada: document.getElementById('entradaAsis').value,
+    horaSalida: document.getElementById('salidaAsis').value
+  }, e.target);
+});
+
+
 // INICIO
 window.onload = () => {
   cargarSelects();
   const path = window.location.pathname;
   const seccion = path === '/' ? 'empleados' : path.substring(1);
-  const validas = ['empleados', 'departamentos', 'vacacion', 'evaluaciones'];
+  const validas = ['empleados', 'departamentos', 'vacacion', 'evaluaciones', 'asistencia'];
   if (validas.includes(seccion)) {
     mostrarSeccion(seccion);
   } else {
