@@ -26,8 +26,8 @@
           </a>
         </li>
         <li class="nav-item mb-2">
-          <a class="nav-link text-white d-flex align-items-center" href="#" onclick="mostrarSeccion('vacaciones'); return false;">
-            <i class="bi bi-calendar3 me-2"></i> Vacaciones
+          <a class="nav-link text-white d-flex align-items-center" href="#" onclick="mostrarSeccion('vacacion'); return false;">
+            <i class="bi bi-calendar3 me-2"></i> vacacion
           </a>
         </li>
         <li class="nav-item mb-2">
@@ -40,8 +40,21 @@
             onclick="mostrarSeccion('asistencia'); return false;">
             <i class="bi bi-clock-history me-2"></i> Asistencia
           </a>
+        <li class="nav-item mb-2">
+          <a class="nav-link text-white d-flex align-items-center" href="#" onclick="mostrarSeccion('permisos'); return false;">
+              <i class="bi bi-door-open me-2"></i> Permisos
+          </a>
         </li>
-
+        <li class="nav-item mb-2">
+          <a class="nav-link text-white d-flex align-items-center" href="#" onclick="mostrarSeccion('horasextra'); return false;">
+              <i class="bi bi-clock-history"></i> Horas Extra
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link text-white d-flex align-items-center" href="#" onclick="mostrarSeccion('viatico'); return false;">
+            <i class="bi bi-wallet me-2"></i> Viáticos
+          </a>
+        </li>
       </ul>
     </nav>
   </aside>
@@ -114,11 +127,11 @@
       </div>
     </section>
 
-    <!-- VACACIONES -->
-    <section id="vacaciones" style="display: none;">
-      <h2>Gestión de Vacaciones</h2>
-      <form id="formVacacion" class="card p-4 mb-4">
-        <input type="hidden" id="idVacacion" />
+    <!-- vacacion -->
+    <section id="vacacion" style="display: none;">
+      <h2>Gestión de vacacion</h2>
+      <form id="formvacacion" class="card p-4 mb-4">
+        <input type="hidden" id="idvacacion" />
         <div class="row g-3">
           <div class="col-md-5">
             <select class="form-select" id="empleadoVac" required>
@@ -138,7 +151,7 @@
       </form>
 
       <div class="table-responsive">
-        <table id="tablaVacaciones" class="table table-striped table-hover">
+        <table id="tablavacacion" class="table table-striped table-hover">
           <thead class="table-primary">
             <tr>
               <th>ID</th><th>Empleado</th><th>Inicio</th><th>Fin</th><th>Acciones</th>
@@ -217,6 +230,163 @@
       <thead class="table-primary">
         <tr>
           <th>ID</th><th>Empleado</th><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================= -->
+<!--   SECCIÓN: PERMISOS           -->
+<!-- ============================= -->
+<section id="permisos" style="display:none;">
+  <h2>Registro de Permisos de Empleado</h2>
+
+  <form id="formPermiso" class="card p-4 mb-4">
+      <input type="hidden" id="idPermiso" />
+
+      <div class="row g-3">
+
+          <div class="col-md-4">
+              <select class="form-select" id="empleadoPerm" required>
+                  <option value="">Seleccione un Empleado</option>
+              </select>
+          </div>
+
+          <div class="col-md-4">
+              <input type="text" class="form-control" id="motivoPerm" placeholder="Motivo del permiso" required />
+          </div>
+
+          <div class="col-md-2">
+              <input type="date" class="form-control" id="inicioPerm" required />
+          </div>
+
+          <div class="col-md-2">
+              <input type="date" class="form-control" id="finPerm" required />
+          </div>
+
+          <div class="col-12">
+              <button class="btn btn-primary">Guardar</button>
+          </div>
+
+      </div>
+  </form>
+
+  <div class="table-responsive">
+      <table id="tablaPermisos" class="table table-striped table-hover">
+          <thead class="table-primary">
+              <tr>
+                  <th>ID</th>
+                  <th>Empleado</th>
+                  <th>Motivo</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Acciones</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+  </div>
+</section>
+
+<section id="horasextra" style="display:none;">
+    <h2>Registro de Horas Extra</h2>
+
+    <form id="formHorasExtra" class="card p-4 mb-4">
+        <input type="hidden" id="idHorasExtra" />
+
+        <div class="row g-3">
+
+            <!-- SELECT EMPLEADO -->
+            <div class="col-md-4">
+                <select class="form-select" id="empleadoHex" required>
+                    <option value="">Seleccione un Empleado</option>
+                </select>
+            </div>
+
+            <!-- FECHA -->
+            <div class="col-md-3">
+                <input type="date" class="form-control" id="fechaHex" required />
+            </div>
+
+            <!-- HORAS -->
+            <div class="col-md-2">
+                <input type="number" step="0.1" class="form-control" id="horasHex" placeholder="Horas" required />
+            </div>
+
+            <!-- MOTIVO -->
+            <div class="col-md-3">
+                <input type="text" class="form-control" id="motivoHex" placeholder="Motivo" />
+            </div>
+
+            <div class="col-12">
+                <button class="btn btn-primary">Guardar</button>
+            </div>
+
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table id="tablaHorasextra" class="table table-striped table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>ID</th>
+                    <th>Empleado</th>
+                    <th>Fecha</th>
+                    <th>Horas</th>
+                    <th>Motivo</th>
+                    <th>Aprobado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</section>
+
+<section id="viatico" style="display:none;">
+  <h2>Registro de Viáticos</h2>
+
+  <form id="formViatico" class="card p-4 mb-4">
+    <input type="hidden" id="idViatico" />
+
+    <div class="row g-3">
+      <div class="col-md-4">
+        <select class="form-select" id="empleadoVia" required>
+          <option value="">Seleccione un Empleado</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <input type="date" class="form-control" id="fechaVia" required />
+      </div>
+
+      <div class="col-md-2">
+        <input type="number" step="0.01" class="form-control" id="montoVia" placeholder="Monto" required />
+      </div>
+
+      <div class="col-md-3">
+        <input type="text" class="form-control" id="descVia" placeholder="Descripción" />
+      </div>
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="table-responsive">
+    <table id="tablaViatico" class="table table-striped table-hover">
+      <thead class="table-primary">
+        <tr>
+          <th>ID</th>
+          <th>Empleado</th>
+          <th>Fecha</th>
+          <th>Monto</th>
+          <th>Descripción</th>
+          <th>Aprobado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody></tbody>
