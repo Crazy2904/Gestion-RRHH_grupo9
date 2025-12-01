@@ -3,7 +3,11 @@ const API = {
   empleados: '/empleados/listar',
   departamentos: '/departamentos/listar',
   vacacion: '/vacacion/listar',
-  evaluaciones: '/evaluaciones/listar'
+  evaluaciones: '/evaluaciones/listar',
+  asistencia: '/asistencia/listar',
+  permisos: '/permisos/listar',
+  horasextra: '/horasextra/listar',
+  viatico: '/viatico/listar'
 };
 
 // MOSTRAR SECCIÓN + URL
@@ -16,12 +20,16 @@ function mostrarSeccion(id) {
     'empleados': '/empleados',
     'departamentos': '/departamentos',
     'vacacion': '/vacacion',
-    'evaluaciones': '/evaluaciones'
+    'evaluaciones': '/evaluaciones',
+    'asistencia': '/asistencia',
+    'permisos': '/permisos',
+    'horasextra': '/horasextra',
+    'viatico': '/viatico',
   };
   history.pushState({ seccion: id }, '', rutas[id] || '/');
 
   listar(id);
-  if (['empleados', 'vacacion', 'evaluaciones'].includes(id)) cargarSelects();
+  if (['empleados', 'vacacion', 'evaluaciones','asistencia', 'permisos', 'horasextra', 'viatico'].includes(id)) cargarSelects();
 }
 
 // LISTAR
@@ -47,6 +55,35 @@ async function listar(tipo) {
       } else if (tipo === 'evaluaciones') {
         cols = `<td>${e.id}</td><td>${e.empleado?.nombre || ''}</td><td>${e.resultado || ''}</td>`;
       }
+      else if (tipo === 'asistencia') {
+            cols = `<td>${e.id}</td>
+                    <td>${e.empleado?.nombre || ''}</td>
+                    <td>${e.fecha}</td>
+                    <td>${e.horaEntrada}</td>
+                    <td>${e.horaSalida}</td>`;
+      }
+      else if (tipo === 'permisos') {
+          cols = `<td>${e.id}</td>
+                  <td>${e.empleado?.nombre || ''}</td>
+                  <td>${e.motivo}</td>
+                  <td>${e.fechaInicio}</td>
+                  <td>${e.fechaFin}</td>`;
+      }
+      else if (tipo === 'horasextra') {
+          cols = `<td>${e.id}</td>
+                  <td>${e.empleado?.nombre || ''}</td>
+                  <td>${e.fecha}</td>
+                  <td>${e.horas}</td>
+                  <td>${e.motivo}</td>`;
+      }
+      else if (tipo === 'viatico') {
+          cols = `<td>${e.id}</td>
+                    <td>${e.empleado?.nombre || ''}</td>
+                    <td>${e.fecha}</td>
+                    <td>${e.monto}</td>
+                    <td>${e.descripcion}</td>
+                    <td>${e.aprobado ? 'Sí' : 'No'}</td>`;
+          }
 
       tbody.innerHTML += `<tr>${cols}<td class="actions">
         <button onclick="editar('${tipo}', ${e.id})">Editar</button>
@@ -112,7 +149,7 @@ async function editar(tipo, id) {
     document.getElementById('idDep').value = e.id;
     document.getElementById('nombreDep').value = e.nombre;
   } else if (tipo === 'vacacion') {
-    document.getElementById('idVacacion').value = e.id;
+    document.getElementById('idvacacion').value = e.id;
     document.getElementById('empleadoVac').value = e.empleado?.id || '';
     document.getElementById('inicioVac').value = e.fechaInicio || '';
     document.getElementById('finVac').value = e.fechaFin || '';
@@ -121,6 +158,35 @@ async function editar(tipo, id) {
     document.getElementById('empleadoEval').value = e.empleado?.id || '';
     document.getElementById('resultadoEval').value = e.resultado || '';
   }
+  else if (tipo === 'asistencia') {
+  document.getElementById('idAsistencia').value = e.id;
+  document.getElementById('empleadoAsis').value = e.empleado?.id || '';
+  document.getElementById('fechaAsis').value = e.fecha;
+  document.getElementById('entradaAsis').value = e.horaEntrada;
+  document.getElementById('salidaAsis').value = e.horaSalida;
+  }
+  else if (tipo === 'permisos') {
+    document.getElementById('idPermiso').value = e.id;
+    document.getElementById('empleadoPerm').value = e.empleado?.id || '';
+    document.getElementById('motivoPerm').value = e.motivo;
+    document.getElementById('inicioPerm').value = e.fechaInicio;
+    document.getElementById('finPerm').value = e.fechaFin;
+  }
+  else if (tipo === 'horasextra') {
+    document.getElementById('idHorasExtra').value = e.id;
+    document.getElementById('empleadoHex').value = e.empleado?.id || '';
+    document.getElementById('fechaHex').value = e.fecha;
+    document.getElementById('horasHex').value = e.horas;
+    document.getElementById('motivoHex').value = e.motivo;
+  }
+  else if (tipo === 'viatico') {
+    document.getElementById('idViatico').value = e.id;
+    document.getElementById('empleadoVia').value = e.empleado?.id || '';
+    document.getElementById('fechaVia').value = e.fecha;
+    document.getElementById('montoVia').value = e.monto;
+    document.getElementById('descVia').value = e.descripcion;
+    }
+
 }
 
 // CARGAR SELECTS
@@ -141,7 +207,7 @@ async function cargarSelects() {
 
     const empRes = await fetch('/empleados/listar');
     const emps = await empRes.json();
-    ['empleadoVac', 'empleadoEval'].forEach(id => {
+    ['empleadoVac', 'empleadoEval', 'empleadoAsis', 'empleadoPerm','empleadoHex','empleadoVia'].forEach(id => {
       const sel = document.getElementById(id);
       if (sel) {
         sel.innerHTML = '<option value="">Seleccione un Empleado</option>';
@@ -162,7 +228,7 @@ async function cargarSelects() {
 window.addEventListener('popstate', () => {
   const path = window.location.pathname;
   const seccion = path.substring(1) || 'empleados';
-  const validas = ['empleados', 'departamentos', 'vacacion', 'evaluaciones'];
+  const validas = ['empleados', 'departamentos', 'vacacion', 'evaluaciones','asistencia', 'permisos', 'horasextra','viatico'];
   if (validas.includes(seccion)) mostrarSeccion(seccion);
 });
 
@@ -186,10 +252,10 @@ document.getElementById('formDepartamento')?.addEventListener('submit', e => {
   }, e.target);
 });
 
-document.getElementById('formVacacion')?.addEventListener('submit', e => {
+document.getElementById('formvacacion')?.addEventListener('submit', e => {
   e.preventDefault();
   guardar('vacacion', {
-    id: document.getElementById('idVacacion').value || null,
+    id: document.getElementById('idvacacion').value || null,
     empleado: { id: document.getElementById('empleadoVac').value },
     fechaInicio: document.getElementById('inicioVac').value,
     fechaFin: document.getElementById('finVac').value
@@ -205,12 +271,56 @@ document.getElementById('formEvaluacion')?.addEventListener('submit', e => {
   }, e.target);
 });
 
+document.getElementById('formAsistencia')?.addEventListener('submit', e => {
+  e.preventDefault();
+  guardar('asistencia', {
+    id: document.getElementById('idAsistencia').value || null,
+    empleado: { id: document.getElementById('empleadoAsis').value },
+    fecha: document.getElementById('fechaAsis').value,
+    horaEntrada: document.getElementById('entradaAsis').value,
+    horaSalida: document.getElementById('salidaAsis').value
+  }, e.target);
+});
+
+document.getElementById('formPermiso')?.addEventListener('submit', e => {
+  e.preventDefault();
+  guardar('permisos', {
+    id: document.getElementById('idPermiso').value || null,
+    empleado: { id: document.getElementById('empleadoPerm').value },
+    motivo: document.getElementById('motivoPerm').value,
+    fechaInicio: document.getElementById('inicioPerm').value,
+    fechaFin: document.getElementById('finPerm').value
+  }, e.target);
+});
+
+document.getElementById('formHorasExtra')?.addEventListener('submit', e => {
+  e.preventDefault();
+  guardar('horasextra', {
+    id: document.getElementById('idHorasExtra').value || null,
+    empleado: { id: document.getElementById('empleadoHex').value },
+    fecha: document.getElementById('fechaHex').value,
+    horas: document.getElementById('horasHex').value,
+    motivo: document.getElementById('motivoHex').value
+  }, e.target);
+});
+
+document.getElementById('formViatico')?.addEventListener('submit', e => {
+e.preventDefault();
+guardar('viatico', {
+id: document.getElementById('idViatico').value || null,
+empleado: { id: document.getElementById('empleadoVia').value },
+fecha: document.getElementById('fechaVia').value,
+monto: parseFloat(document.getElementById('montoVia').value),
+descripcion: document.getElementById('descVia').value
+}, e.target);
+});
+
 // INICIO
 window.onload = () => {
   cargarSelects();
   const path = window.location.pathname;
   const seccion = path === '/' ? 'empleados' : path.substring(1);
-  const validas = ['empleados', 'departamentos', 'vacacion', 'evaluaciones'];
+  const validas = ['empleados', 'departamentos', 'vacacion', 'evaluaciones', 'asistencia','permisos', 'horasextra','viatico'];
   if (validas.includes(seccion)) {
     mostrarSeccion(seccion);
   } else {
